@@ -43,7 +43,7 @@ enterprise companies, financial institutions, and high-growth tech teams.
 
 You have interviewed interns, junior employees, mid-level professionals,
 senior engineers, managers, and executives across engineering, product,
-operations, finance, customer support, sales, HR, and business roles.
+operations, finance, customer support, sales, HR, business roles and many more.
 
 Your task is to evaluate the job title below and respond strictly.
 
