@@ -12,6 +12,7 @@ load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
+# Define the models to try in order of preference
 MODELS = [
     "gemini-2.5-flash-lite",
     "gemini-2.5-flash", 
@@ -20,6 +21,7 @@ MODELS = [
 
 @api_view(["POST"])
 def generate_questions(request):
+    # Extract and validate the job title from the request
 
     job_title = request.data.get("job_title", "").strip()
 
@@ -28,12 +30,13 @@ def generate_questions(request):
             {"success": False, "error": "Job title is required."},
             status=status.HTTP_400_BAD_REQUEST
         )
-
+# Basic validation to check if the job title is reasonably valid
     if len(job_title) < 3 or not any(char.isalpha() for char in job_title):
         return Response(
             {"success": False, "error": "Please enter a valid professional job title."},
             status=status.HTTP_400_BAD_REQUEST
         )
+    # refine the prompt with clear instructions and quality benchmarks
 
     prompt = f"""
 You are a world-class recruiter, hiring manager, and interview specialist
@@ -170,6 +173,7 @@ STRICT OUTPUT FORMAT:
                 {"success": False, "error": "This does not appear to be a valid job title."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        # Use regex to extract the questions while ensuring we capture multiline questions correctly
 
         lines = re.findall(
             r'\d+[\.\-\)]\s.*?(?=\n\d+[\.\-\)]\s|$)',
@@ -180,7 +184,7 @@ STRICT OUTPUT FORMAT:
         clean_response = "\n".join(
             [line.strip() for line in lines[:3]]
         )
-
+# Ensure we have exactly 3 questions and they are not empty
         if not clean_response:
             return Response(
                 {
@@ -189,7 +193,7 @@ STRICT OUTPUT FORMAT:
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
+# Return the cleaned questions in the response
         return Response(
             {
                 "success": True,
@@ -199,6 +203,7 @@ STRICT OUTPUT FORMAT:
             status=status.HTTP_200_OK
         )
 
+# Catch any unexpected errors from the Gemini API
     except Exception as e:
         print(f"Gemini API error: {e}")
         return Response(
