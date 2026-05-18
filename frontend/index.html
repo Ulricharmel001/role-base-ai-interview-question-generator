@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Interview Question Generator</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="ai-badge">
+            <span class="badge-dot" aria-hidden="true"></span>
+            Powered by Gemini AI
+        </div>
+        <h1>AI Interview Question Generator</h1>
+        <p class="subtitle">
+            Enter any professional job title to instantly generate
+            3 thoughtful, role-specific interview questions.
+        </p>
+        <div class="divider" aria-hidden="true"></div>
+
+        <!-- Input — label `for` must match input `id` for accessibility -->
+        <div class="input-group">
+            <label for="jobTitle">Job title</label>
+            <input
+                type="text"
+                id="jobTitle"
+                placeholder="e.g. Customer Success Manager, Product Designer..."
+                autocomplete="off"
+                spellcheck="false"
+            />
+        </div>
+        <!-- Triggers generateQuestions() in app.js -->
+        <button id="generateBtn" class="btn-primary">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            Generate questions
+        </button>
+
+        <!-- Loading spinner, hidden by default and shown during API calls -->
+        <div id="loading" class="loading-spinner" role="status" aria-live="polite">
+            <div class="spinner-icon" aria-hidden="true"></div>
+            <div class="spinner-body">
+                <p class="spinner-text" id="spinnerText">Generating interview questions...</p>
+                <div class="spinner-bar-track" aria-hidden="true">
+                    <div class="spinner-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results section, hidden by default and shown after successful API response -->
+        <section id="results" class="results-container" aria-live="polite">
+            <div class="results-header">
+                <div class="results-title">
+                    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 11l3 3L22 4"/>
+                        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                    </svg>
+                    Generated questions
+                    <span class="results-count" id="resultsCount">3</span>
+                </div>
+                <!-- Displays the searched job title -->
+                <span class="results-role" id="resultsRole"></span>
+            </div>
+            <!-- Question cards injected here by displayQuestions() in app.js -->
+            <div class="questions-list" id="questionsList"></div>
+        </section>
+    </div>
+    <script src="app.js"></script>
+
+</body>
+</html>
