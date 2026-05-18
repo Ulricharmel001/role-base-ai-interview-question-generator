@@ -1,4 +1,5 @@
 import os
+import re
 import google.generativeai as genai
 
 from dotenv import load_dotenv
@@ -149,7 +150,6 @@ STRICT RULES:
 - No extra text
 - Exactly 3 questions only
 """
-
     try:
         ai_response = None
 # Try each model in order, moving to the next if we hit a rate limit error
@@ -175,9 +175,28 @@ STRICT RULES:
                 {"success": False, "error": "This does not appear to be a valid job title."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-# Clean the response to ensure it strictly follows the expected format, removing any lines that don't start with a number followed by a period.
-        lines = [line.strip() for line in ai_response.split("\n") if line.strip() and line.strip()[0].isdigit()]
-        clean_response = "\n".join(lines[:3])
+
+# Clean the response to ensure it strictly follows the expected format,
+# while also handling cases where Gemini returns everything in one block.
+        lines = re.findall(
+            r'\d+[\.\-\)]\s.*?(?=\n\d+[\.\-\)]\s|$)',
+            ai_response,
+            re.DOTALL
+        )
+
+        clean_response = "\n".join(
+            [line.strip() for line in lines[:3]]
+        )
+
+# Prevent empty successful responses
+        if not clean_response:
+            return Response(
+                {
+                    "success": False,
+                    "error": "AI returned an invalid response format."
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
         return Response(
             {
