@@ -106,9 +106,10 @@ def generate_questions(request):
             },
             status=status.HTTP_200_OK
         )
-
+# returning error message from api call failure, which could be due to various reasons such as network issues, 
+# invalid API key, or unexpected response format.
     except Exception as e:
-        print(f"Gemini API error: {e}")
+        print(f"Gemini API error: {e}")  # Log the error for debugging purposes
         return Response(
             {"success": False, "error": "An unexpected error occurred while generating interview questions."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
