@@ -2,8 +2,8 @@
 
 A web app that generates 3 role-specific interview questions from any job title, powered by Google Gemini AI.
 
-**Live Demo:** [your-vercel-url]  
-**Backend API:** [your-render-url]
+**Live Demo:** [UI](https://role-base-ai-interview-question-gen.vercel.app/)]  
+**Backend API:** [[API](https://interview-question-ai-ikvw.onrender.com/api/questions/)]
 
 ---
 
