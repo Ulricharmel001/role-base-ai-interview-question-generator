@@ -1,0 +1,42 @@
+# Core Django stack
+Django>=5.2,<6.0
+djangorestframework>=3.15
+django-cors-headers>=4.0
+whitenoise>=6.0
+gunicorn>=21.0.0
+
+# Environment management
+python-dotenv>=1.0
+
+# HTTP & utilities
+requests>=2.31
+urllib3>=2.0
+certifi
+idna
+charset-normalizer
+
+# Google Gemini 
+google-generativeai>=0.8.6
+google-api-python-client
+google-auth
+google-auth-httplib2
+
+# Django internals
+asgiref>=3.8
+sqlparse>=0.5
+
+# Data / security libs
+pydantic>=2.0
+pydantic_core
+cryptography>=40.0
+cffi>=1.15
+
+# Misc utilities
+tqdm
+pyparsing
+typing_extensions
+typing-inspection
+pyasn1
+pyasn1_modules
+uritemplate
+httplib2
