@@ -11,19 +11,19 @@ from rest_framework import status
 load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-# We will attempt to use the models in order of preference, falling back to the next one if we encounter a rate limit error. 
-# This allows us to provide the best possible experience while navigating potential API limitations.
+
 MODELS = [
     "gemini-2.5-flash-lite",
     "gemini-2.5-flash",
     "gemini-3-flash",
 ]
 
+
 @api_view(["POST"])
 def generate_questions(request):
 
     job_title = request.data.get("job_title", "").strip()
-   # Basic validation to catch empty or obviously invalid input before hitting the API
+
     if not job_title:
         return Response(
             {"success": False, "error": "Job title is required."},
@@ -35,8 +35,7 @@ def generate_questions(request):
             {"success": False, "error": "Please enter a valid professional job title."},
             status=status.HTTP_400_BAD_REQUEST
         )
-# The prompt is designed to elicit a structured response while enforcing strict rules to ensure the output is clean and usable by the frontend.
-    
+
     prompt = f"""
 You are a world-class recruiter, hiring manager, and interview specialist
 with over 10 years of experience hiring candidates across startups,
@@ -132,7 +131,7 @@ EXAMPLE QUALITY BENCHMARK:
 
 Job Title: "Customer Success Manager"
 
-1. Tell me about a situation where a customer was at risk of leaving — how did you identify the issue, what steps did you take, and what was the final outcome?
+1. Tell me about a situation where a customer was at risk of leaving, how did you identify the issue, what steps did you take, and what was the final outcome?
 2. Walk me through how you onboard a new enterprise customer to ensure they achieve value from the product as quickly as possible.
 3. How do you manage competing priorities when several high-value customers need urgent attention at the same time?
 
@@ -141,24 +140,21 @@ STRICT OUTPUT FORMAT:
 1. Question one
 2. Question two
 3. Question three
-
-STRICT RULES:
-- No explanations
-- No markdown
-- No bullet points
-- No headings
-- No extra text
-- Exactly 3 questions only
 """
     try:
         ai_response = None
-# Try each model in order, moving to the next if we hit a rate limit error
+
         for model_name in MODELS:
             try:
                 model = genai.GenerativeModel(model_name)
                 response = model.generate_content(prompt)
-                ai_response = response.text.strip()
-                break
+
+                ai_response = getattr(response, "text", None)
+
+                if ai_response:
+                    ai_response = ai_response.strip()
+                    break
+
             except Exception as e:
                 if "429" in str(e):
                     continue
@@ -176,8 +172,6 @@ STRICT RULES:
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-# Clean the response to ensure it strictly follows the expected format,
-# while also handling cases where Gemini returns everything in one block.
         lines = re.findall(
             r'\d+[\.\-\)]\s.*?(?=\n\d+[\.\-\)]\s|$)',
             ai_response,
@@ -188,7 +182,6 @@ STRICT RULES:
             [line.strip() for line in lines[:3]]
         )
 
-# Prevent empty successful responses
         if not clean_response:
             return Response(
                 {
@@ -206,11 +199,13 @@ STRICT RULES:
             },
             status=status.HTTP_200_OK
         )
-# returning error message from api call failure, which could be due to various reasons such as network issues, 
-# invalid API key, or unexpected response format.
+
     except Exception as e:
-        print(f"Gemini API error: {e}")  # Log the error for debugging purposes
+        print(f"Gemini API error: {e}")
         return Response(
-            {"success": False, "error": "An unexpected error occurred while generating interview questions."},
+            {
+                "success": False,
+                "error": "An unexpected error occurred while generating interview questions."
+            },
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
