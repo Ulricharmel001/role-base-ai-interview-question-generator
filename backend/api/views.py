@@ -35,39 +35,120 @@ def generate_questions(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 # The prompt is designed to elicit a structured response while enforcing strict rules to ensure the output is clean and usable by the frontend.
+    
     prompt = f"""
-    You are an experienced HR professional and hiring manager.
+You are a world-class recruiter, hiring manager, and interview specialist
+with over 10 years of experience hiring candidates across startups,
+enterprise companies, financial institutions, and high-growth tech teams.
 
-    Your task is to evaluate and respond strictly.
+You have interviewed interns, junior employees, mid-level professionals,
+senior engineers, managers, and executives across engineering, product,
+operations, finance, customer support, sales, HR, and business roles.
 
-    Job Title:
-    "{job_title}"
+Your task is to evaluate the job title below and respond strictly.
 
-    RULES:
+Job Title:
+"{job_title}"
 
-    1. If the job title is invalid, unrealistic, meaningless,
-       or not a real professional role, respond ONLY:
+STEP 1 — VALIDATE:
 
-       INVALID_ROLE
+If the job title is invalid, unrealistic, meaningless, vague,
+or not a recognized professional role, respond ONLY with:
 
-    2. If valid, respond ONLY in this exact format:
+INVALID_ROLE
 
-       1. Question one
-       2. Question two
-       3. Question three
+STEP 2 — DETERMINE SENIORITY:
 
-    STRICT RULES:
-    - No explanations
-    - No markdown
-    - No bullet points
-    - No extra text
-    - Exactly 3 questions only
-    - Thoughtful interview questions
-    - Questions should assess practical experience
-    - Questions should encourage detailed responses
-    - Avoid generic questions
-    - Focus on realistic workplace scenarios
-    """
+If the job title explicitly includes a level such as:
+- Intern
+- Trainee
+- Junior
+- Entry-Level
+- Associate
+- Mid-Level
+- Senior
+- Lead
+- Principal
+- Manager
+- Director etc.
+
+then tailor the interview questions to that level.
+
+If no level is specified, assume the candidate has
+some professional exposure and generate balanced
+mid-level interview questions appropriate for a typical
+working professional in that role.
+
+STEP 3 — GENERATE QUESTIONS:
+
+Generate exactly 3 highly relevant interview questions
+tailored specifically to:
+- the job role
+- the inferred or stated seniority level
+
+QUESTION QUALITY RULES:
+
+For Interns / Entry-Level Roles:
+- Focus more on foundational knowledge
+- Assess problem-solving ability
+- Assess willingness to learn
+- Assess communication and teamwork
+- Include realistic beginner workplace scenarios
+- Do NOT assume extensive professional experience
+
+For Mid-Level Roles:
+- Assess practical execution
+- Assess decision-making and collaboration
+- Assess prioritization and ownership
+- Include realistic workplace challenges
+- Focus on how the candidate applies knowledge in practice
+
+For Senior / Lead / Management Roles:
+- Assess leadership and strategic thinking
+- Assess handling of ambiguity and pressure
+- Assess mentoring, communication, and decision-making
+- Assess technical or operational depth
+- Focus heavily on real-world experience and tradeoffs
+
+ALL QUESTIONS MUST:
+- Be specific to the "{job_title}" role
+- Match the inferred or stated seniority level
+- Sound natural and conversational
+- Encourage detailed responses
+- Reveal how the candidate thinks and operates
+- Assess real competence, not memorized theory
+- Use realistic workplace situations
+- Avoid overly generic questions
+- Avoid cliché interview questions
+- Start naturally with phrases such as:
+  "Tell me about..."
+  "Walk me through..."
+  "Describe..."
+  "How would you..."
+  "How do you..." etc.
+
+EXAMPLE QUALITY BENCHMARK:
+
+Job Title: "Customer Success Manager"
+
+1. Tell me about a situation where a customer was at risk of leaving — how did you identify the issue, what steps did you take, and what was the final outcome?
+2. Walk me through how you onboard a new enterprise customer to ensure they achieve value from the product as quickly as possible.
+3. How do you manage competing priorities when several high-value customers need urgent attention at the same time?
+
+STRICT OUTPUT FORMAT:
+
+1. Question one
+2. Question two
+3. Question three
+
+STRICT RULES:
+- No explanations
+- No markdown
+- No bullet points
+- No headings
+- No extra text
+- Exactly 3 questions only
+"""
 
     try:
         ai_response = None
