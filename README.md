@@ -134,11 +134,9 @@ No build step needed. Open `frontend/index.html` directly in your browser, or se
 The backend cycles through three Gemini models in order. If one hits its rate limit (429), it automatically tries the next:
 
 ```
-gemini-2.5-flash-lite  →  gemini-2.5-flash  →  gemini-3-flash
-     (fastest)               (balanced)          (most capable)
+gemini-2.5-flash-lite  →  gemini-2.5-flash
 ```
-
-This keeps the app working even when free tier limits are reached.
+This is to have more  request while on free tier.
 
 ---
 
